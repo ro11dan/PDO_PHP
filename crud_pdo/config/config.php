@@ -10,6 +10,6 @@ return[
     "DB_PORT" => getenv("DB_PORT") ?: "3306",
     "DB_NAME" => getenv("DB_NAME") ?: "crud_pdo",
     "DB_USER" => getenv("DB_USER") ?: "crud_user",
-    "DB_PASSWORD" => getenv("DB_PASSWORD") ?: "crud_pass",
+    "DB_PASSWORD" => getenv("DB_PASSWORD") ?: "mococso795028",
     "DB_CHARSET" => getenv("DB_CHARSET") ?: "utf8mb4",
 ];

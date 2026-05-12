@@ -21,3 +21,8 @@ CREATE TABLE IF NOT EXISTS citas (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+/*
+CREATE USER 'crud_user'@'localhost' IDENTIFIED BY 'mococso795028';
+GRANT ALL PRIVILEGES ON crud_pdo.* TO 'crud_user'@'localhost';
+FLUSH PRIVILEGES;
+*/

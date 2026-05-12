@@ -43,7 +43,7 @@ if( $_SERVER['REQUEST_METHOD'] == 'POST'){
                 'motivo_cita' => $motivo_cita,
                 'numero_telefono' => $numero_telefono
             ]);
-                ]);
+            
             // Redireccionar a la pagina principal despues de insertar el dueno
             header("Location: index.php");
             exit();
