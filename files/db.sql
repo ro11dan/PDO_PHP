@@ -7,7 +7,7 @@ CREATE DATABASE IF NOT EXISTS crud_pdo
 USE crud_pdo;
 
 -- 3) Crear tabla de ejemplo
-CREATE TABLE IF NOT EXISTS dueño (
+CREATE TABLE IF NOT EXISTS citas (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nombre_dueno VARCHAR(120) NOT NULL,
   nombre_mascota VARCHAR(120) NOT NULL,
