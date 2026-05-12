@@ -1,0 +1,59 @@
+# Orquesta de 2 contenedores
+# - app: PHP + Apache
+# - db: MySQL
+services:
+  app:
+    build:
+      # Construir la imagen usando Dockerfile
+      context: .
+      dockerfile: docker/app/Dockerfile
+    container_name: crud_pdo_app    # Nombre fijo del contenedor de la app
+    restart: unless-stopped         # Reinicia automáticamente el contenedor
+    ports:
+      # Apache expone el puerto 80 de forma interna, en APP_PORT del host (por defecto 8085)
+      - "${APP_PORT:-8085}:80"
+    environment:                    # ← era "enviroment" (faltaba la 'n')
+      # Variables de entorno para conectar la app con MySQL
+      DB_HOST: db                   # Nombre del servicio de la base de datos
+      DB_PORT: 3306                 # Puerto interno de MySQL en el contenedor
+      DB_NAME: ${MYSQL_DATABASE:-crud_pdo}
+      DB_USER: ${MYSQL_USER:-crud_user}
+      DB_PASSWORD: ${MYSQL_PASSWORD:-crud_pass}
+      DB_CHARSET: utf8mb4
+    volumes:
+      # Montar el código fuente local en el contenedor
+      - ./crud_pdo:/var/www/html/
+    depends_on:
+      db:
+        # Esperar a que MySQL esté disponible antes de iniciar la app
+        condition: service_healthy
+
+  db:                               # ← faltaba indentación (era parte de app)
+    image: mysql:8.0
+    container_name: crud_pdo_db     # Nombre fijo del contenedor de la base de datos
+    restart: unless-stopped
+    ports:
+      # MySQL expone el puerto 3306 internamente, mapeado a DB_PORT del host (por defecto 3308)
+      - "${DB_PORT:-3308}:3306"
+    environment:                    # ← era "eviroment" (typo doble)
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-crud_pdo}
+      MYSQL_USER: ${MYSQL_USER:-crud_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-crud_pass}
+    volumes:
+      # Volumen para persistencia de datos de MySQL
+      - db_data:/var/lib/mysql
+      # Script SQL que se ejecuta solo al inicializar el volumen
+      - ./files/db.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    healthcheck:
+      # Verificar disponibilidad del servicio MySQL
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p$${MYSQL_ROOT_PASSWORD} --silent"]
+      #       ↑ CMD-SHELL con guión, no guión bajo       ↑ era "mysqadmin" (faltaba la 'l')
+      interval: 10s
+      timeout: 5s
+      retries: 3                    # ← faltaba este campo recomendado
+      start_period: 20s
+
+volumes:
+  # Volumen para persistencia de datos de MySQL
+  db_data:
